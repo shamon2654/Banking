@@ -5,6 +5,7 @@ import "./index.css"
 import store from "./store.jsx"
 import { Provider } from "react-redux"//using to pass the values from store.jsx to components
 
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>

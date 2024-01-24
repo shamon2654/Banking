@@ -1,32 +1,45 @@
-import { useState } from "react";
-
-
-
+import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { deposit,  payloan, requestLoan, withdraw } from "./AccountSlice"
 
 function AccountOperations() {
- 
+  const dispatch = useDispatch()
 
-  const [depositAmount, setDepositAmount] = useState("");
-  const [withdrawalAmount, setWithdrawalAmount] = useState("");
-  const [loanAmount, setLoanAmount] = useState("");
-  const [loanPurpose, setLoanPurpose] = useState("");
-  const [currency, setCurrency] = useState("INR");
+  const [depositAmount, setDepositAmount] = useState("")
+  const [withdrawalAmount, setWithdrawalAmount] = useState("")
+  const [loanAmount, setLoanAmount] = useState("")
+  const [loanPurpose, setLoanPurpose] = useState("")
+  const [currency, setCurrency] = useState("INR")
 
-  ;
-
+  const {
+    loan: currentLoan,
+    loanPurpose: currentLoanPurpose,
+    balance,
+    isLoading
+  } = useSelector((store) => store.account)
   function handleDeposit() {
-   
+    if (!depositAmount) return
+    dispatch(deposit(depositAmount,currency))
+    setDepositAmount("")
   }
 
   function handleWithdrawal() {
-   
+    if (!withdrawalAmount) return
+    dispatch(withdraw(withdrawalAmount))
+    setWithdrawalAmount(" ")
   }
 
   function handleRequestLoan() {
-   
+    if (!loanAmount || !loanPurpose) return
+    dispatch(requestLoan(loanAmount, loanPurpose))
+    setLoanAmount("")
+    setLoanPurpose("")
   }
 
   function handlePayLoan() {
+    
+    if (!currentLoan) return; 
+    dispatch(payloan())
     
   }
 
@@ -39,12 +52,12 @@ function AccountOperations() {
           <input
             type="number"
             value={depositAmount}
-            onChange=''
+            onChange={(e) => setDepositAmount(Number(e.target.value))}
             placeholder="Deposit amount"
           />
           <select
             value={currency}
-            onChange=''
+            onChange={(e) => setCurrency(e.target.value)}
           >
             <option value="INR">Indian Rupees</option>
             <option value="USD">US Dollar</option>
@@ -52,9 +65,7 @@ function AccountOperations() {
             <option value="GBP">British Pound</option>
           </select>
 
-          <button onClick={handleDeposit}>
-          Deposit
-          </button>
+          <button onClick={handleDeposit}>{isLoading?"converting...":`Deposit${depositAmount}` }</button>
         </div>
 
         <div>
@@ -62,12 +73,10 @@ function AccountOperations() {
           <input
             type="number"
             value={withdrawalAmount}
-            onChange=''
+            onChange={(e) => setWithdrawalAmount(Number(e.target.value))}
             placeholder="Withdraw amount"
           />
-          <button onClick=''>
-            Withdraw 
-          </button>
+          <button onClick={handleWithdrawal}>Withdraw</button>
         </div>
 
         <div>
@@ -75,27 +84,27 @@ function AccountOperations() {
           <input
             type="number"
             value={loanAmount}
-            onChange=''
+            onChange={(e) => setLoanAmount(Number(e.target.value))}
             placeholder="Loan amount"
           />
           <input
             value={loanPurpose}
-            onChange=''
+            onChange={(e) => setLoanPurpose(e.target.value)}
             placeholder="Loan purpose"
           />
-          <button onClick=''>Request loan</button>
+          <button onClick={handleRequestLoan}>Request loan</button>
         </div>
-        
+        {currentLoan > 0 && (
           <div>
             <span>
-              Pay back 
+              Pay back {currentLoan}({currentLoanPurpose})
             </span>
-            <button onClick=''>Pay loan</button>
+            <button onClick={handlePayLoan}>Pay loan</button>
           </div>
-        
+        )}
       </div>
     </div>
-  );
+  )
 }
 
-export default AccountOperations;
+export default AccountOperations
