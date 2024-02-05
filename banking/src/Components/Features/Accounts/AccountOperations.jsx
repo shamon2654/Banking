@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { deposit,  payloan, requestLoan, withdraw } from "./AccountSlice"
+import { deposit, payloan, requestLoan, withdraw } from "./AccountSlice"
+// import { ToastContainer, toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 
 function AccountOperations() {
   const dispatch = useDispatch()
@@ -25,6 +27,11 @@ function AccountOperations() {
 
   function handleWithdrawal() {
     if (!withdrawalAmount) return
+    if (withdrawalAmount > balance) {
+      return toast.warning("Warning Notification !", {
+        position: toast.POSITION.TOP_LEFT,
+      });
+    }
     dispatch(withdraw(withdrawalAmount))
     setWithdrawalAmount(" ")
   }
